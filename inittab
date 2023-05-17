@@ -1,0 +1,3 @@
+::sysinit:/etc/init.d/rcS
+::sysinit:-/bin/sh -c ./run.sh
+::respawn:-/bin/sh
