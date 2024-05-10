@@ -19,14 +19,14 @@ fi
 set -x
 
 /usr/bin/qemu-system-x86_64 \
-	-smp 4 \
+	-smp 90 \
 	-kernel $KERNEL \
 	-initrd $INITRD_PATH \
 	-cpu host,vmx=on \
 	-machine q35,kernel-irqchip=split \
 	-device intel-iommu,intremap=on,device-iotlb=on \
 	-enable-kvm \
-	-m 16G \
+	-m 150G \
 	-drive file=$GUEST_IMAGE,if=none,id=nvme0,format=qcow2,snapshot=on \
 	-device nvme,drive=nvme0,serial=1234 \
 	-netdev user,id=n0,hostfwd=tcp::5900-:5900,hostfwd=tcp::$SSH_PORT-:$SSH_PORT,hostfwd=tcp::3389-:3389,hostfwd=tcp::$GUEST_CONSOLE_PORT-:$GUEST_CONSOLE_PORT,hostfwd=tcp::$HOST_TELNET_PORT-:$HOST_TELNET_PORT,hostfwd=tcp::$GDB_PORT-:$GDB_PORT \

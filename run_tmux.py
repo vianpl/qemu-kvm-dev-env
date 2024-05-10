@@ -141,7 +141,7 @@ class Tmux:
         guest_console.send_keys('sleep 2 && nc localhost 1235; read')
 
         ssh = host_shell.split_window(attach=False, vertical=False)
-        ssh.send_keys('source ./config.sh && ./ssh-connect.sh; read')
+        ssh.send_keys('source ./config.sh && sleep 2 && ./ssh-connect.sh; read')
 
         host_shell.select_pane()
 

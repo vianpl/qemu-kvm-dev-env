@@ -76,7 +76,7 @@ TMPDIR=$(mktemp -d)
         ln -s / usr/share/qemu
         ln -s / keymaps
         for file in bios.bin vgabios.bin bios-256k.bin vgabios-stdvga.bin kvmvapic.bin linuxboot_dma.bin efi-e1000.rom efi-vmxnet3.rom keymaps/en-us; do
-            for dir in /usr/share/qemu /usr/share/seabios; do
+            for dir in /usr/share/qemu /usr/share/seabios /usr/share/seavgabios /usr/share/ipxe/qemu; do
                 [ -e $dir/$file ] || continue
                 cp $dir/$file .
             done

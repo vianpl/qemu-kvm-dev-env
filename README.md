@@ -1,11 +1,11 @@
 QEMU/KVM Development Tools
 --------------------------
 
-This repo contains a few helper scripts that make use of nested virtualization
-to simplify experimentation with Linux and QEMU's virtualization interfaces.
-Once configured, as detailed in `config.sh`, it allows launching a development
-kernel using the system's QEMU. Within that virtual machine, an initrd
-containing the development QEMU binary is loaded, and ultimately a test
+This repository contains a few helper scripts that make use of nested
+virtualization to simplify experimentation with Linux and QEMU's virtualization
+interfaces. Once configured, as detailed in `config.sh`, it allows launching a
+development kernel using the system's QEMU. Within that virtual machine, an
+initrd containing the development QEMU binary is loaded, and ultimately a test
 operating system is booted using the development QEMU binary. This allows to
 quickly test new virtualization interfaces, without having to go through the
 hassle of installing new kernels on real systems. For more information see the
@@ -13,37 +13,33 @@ usage section at the bottom.
 
 ## Setup
 
-Install dependencies, validated on AL2 (rhel7): 
+Install dependencies, validated on Fedora 41:
 
 ```
-$ sudo yum groupinstall -y 'Development Tools'
-$ sudo yum install -y https://rpmfind.net/linux/epel/next/8/Everything/x86_64/Packages/b/busybox-1.35.0-2.el8.next.x86_64.rpm
-$ sudo yum install -y glib2-devel pixman-devel clang openssl-devel trace-cmd qemu ncurses-devel telnet tmux expect nc
-$ sudo python3 -m pip install meson
-$ sudo python3 -m pip install ninja
-
-$ # Install libslirp (Only necessary on AL2/rhel7, on modern distros install
-$ # libslirp through the package manager)
-$ #
-$ git clone https://gitlab.freedesktop.org/slirp/libslirp
-$ cd libslirp
-$ meson build
-$ # Install libslirp
-$ sudo $(whereis ninja | cut -d" " -f 2) -C build install 
-$ # Install pkgconfig files, necessary for QEMU to find libslirp
-$ sudo cp build/meson-private/slirp.pc /usr/share/pkgconfig/.
-$ # Let ld know where libslirp lives
-$ echo "/usr/local/lib64" | sudo tee /etc/ld.so.conf.d/libslirp.conf
-$ sudo ldconfig
-$ cd -
+$ sudo dnf in -y @development-tools
+$ sudo dnf in -y ninja bzip2 pixman-devel libslirp-devel openssl-devel-engine python3-libtmux \
+      busybox strace trace-cmd edk2-ovmf qemu-system-x86 nc expect tmux git bc telnet
 ```
-Build an up-to-date copy of QEMU (AL2's gcc is too old):
+
+Copy the following into /etc/udev/rules.d/kvm-user.rules, update "GROUP" to
+match the user's:
+```
+KERNEL=="kvm", GROUP="fedora", MODE="0660"
+KERNEL=="vhost-vsock", GROUP="fedora", MODE="0660"
+KERNEL=="vhost-net", GROUP="fedora", MODE="0660"
+```
+
+Then run:
+```
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+Build an up-to-date copy of QEMU:
 
 ```
-$ git clone git@github.com:vianpl/qemu.git
+$ git clone https://github.com/vianpl/qemu.git
 $ cd qemu
-$ git checkout vsm-rfc-v1   # Optional
-$ ./configure --target-list=x86_64-softmmu --cc=clang --cxx=clang --enable-debug --enable-trace-backends=ftrace
+$ git checkout vsm/next
+$ ./configure --target-list=x86_64-softmmu --enable-debug --enable-trace-backends=ftrace
 $ make -j$(nproc)
 $ cd -
 ```
@@ -51,31 +47,30 @@ $ cd -
 Build a kernel for testing:
 
 ```
-$ git clone git@github.com:vianpl/linux.git
+$ git clone https://github.com/vianpl/linux.git
 $ cd linux
-$ git checkout vsm-rfc-v1   # Optional
+$ git checkout vsm/next
 $ make defconfig
 $ ./scripts/config --enable CONFIG_BLK_DEV_NVME --enable CONFIG_KVM --enable CONFIG_KVM_INTEL
 $ make olddefconfig
-$ make -j$(nproc) CC=clang bzImage
+$ make -j$(nproc) bzImage
 $ cd -
 ```
-This gives you a working kernel image.
-
 [Optional] Build kvm-unit-tests:
 ```
-$ git clone git@github.com:vianpl/kvm-unit-tests.git
+$ git clone https://github.com/vianpl/kvm-unit-tests.git
 $ cd kvm-unit-tests-vsm
-$ git checkout vsm-rfc-v1   # Optional
+$ git checkout vsm/next 
 $ ./configure
 $ make -j$(nproc) standalone
 $ cd -
 ```
 
-Ultimately update `config.sh`, and build the initrd:
-
+Pull this repository and update `config.sh`:
 ```
-$ ./mkinitramfs.sh initrd
+$ git clone https://github.com/vianpl/qemu-kvm-dev-env.git
+$ cd qemu-kvm-dev-env
+$ # Here's where 'config.sh' gets updated...
 ```
 ## Usage
 
@@ -131,3 +126,7 @@ In case debugging is necessary `run_tmux.py` has the following options:
 
 - perf binary
 - Try to reconnect ssh after reboot
+- KVM selftests, for now:
+```
+$ make -C tools/testing/selftests TARGETS=kvm INSTALL_PATH=/home/nsaenz/c/qemu-kvm-dev-env/share/ CC=clang -j100 install
+```
