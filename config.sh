@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export QEMU_BUILD_DIR="/home/nsaenz/c/qemu/build"
-export KERNEL_BUILD_DIR="/home/nsaenz/c/linux"
+export QEMU_BUILD_DIR="/home/nsaenz/c/qemu2/build"
+export KERNEL_BUILD_DIR="/home/nsaenz/c/linux2"
 export KVM_UNIT_TESTS_BUILD_DIR="/home/nsaenz/c/kvm-unit-tests"
 
 export WORK_DIR="/home/nsaenz/c/qemu-kvm-dev-env"

@@ -35,7 +35,7 @@ set -x
 	-device virtio-serial-pci \
 	-chardev stdio,id=c,signal=off,mux=on \
 	-mon chardev=c,mode=readline \
-	-device virtconsole,chardev=c \
 	-device qemu-xhci \
-	-append "console=hvc0 kvm_intel.dump_invalid_vmcs=1 nokaslr vfio_iommu_type1.allow_unsafe_interrupts=1 $1 $2" \
+	-append "console=ttyS0 kvm_intel.dump_invalid_vmcs=1 nokaslr vfio_iommu_type1.allow_unsafe_interrupts=1 $1 $2" \
 	-virtfs local,path=$SHARE_DIR,mount_tag=host,security_model=none \
+	-serial chardev:c
