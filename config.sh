@@ -5,7 +5,8 @@ export KERNEL_BUILD_DIR="/home/nsaenz/c/linux"
 export KVM_UNIT_TESTS_BUILD_DIR="/home/nsaenz/c/kvm-unit-tests"
 
 export WORK_DIR="/home/nsaenz/c/qemu-kvm-dev-env"
-export GUEST_IMAGE="$WORK_DIR/../qemu-kvm-dev-disk-images/windows-server-2016.qcow2"
+#export GUEST_IMAGE="$WORK_DIR/../qemu-kvm-dev-disk-images/windows-server-2016.qcow2"
+export GUEST_IMAGE="/home/nsaenz/brim2/src/Brimstone/brimstone-blobs/amis/windows-server-2019-NVMe-UEFI.qcow2"
 
 # No need to change the defines below, the defaults should be mostly fine
 export SHARE_DIR="$WORK_DIR/share"

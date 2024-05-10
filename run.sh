@@ -21,7 +21,7 @@ HV="$HV,hv-vapic=on"
 HV="$HV,hv-vsm=on"
 #HV="hv-passthrough=on"
 
-CPUS="1,maxcpus=2"
+CPUS="2"
 VARS=sb
 MACHINE=pc
 grep -q blank /proc/cmdline && VARS=blank
