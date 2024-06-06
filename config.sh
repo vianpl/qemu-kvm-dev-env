@@ -1,10 +1,11 @@
 #!/bin/bash
 
-export QEMU_BUILD_DIR="/home/nsaenz/c/qemu/build"
-export KERNEL_BUILD_DIR="/home/nsaenz/c/linux"
-export KVM_UNIT_TESTS_BUILD_DIR="/home/nsaenz/c/kvm-unit-tests"
+export ROOT_DIR="/home/nsaenz/c/"
+export QEMU_BUILD_DIR="$ROOT_DIR/qemu/build"
+export KERNEL_BUILD_DIR="$ROOT_DIR/linux"
+export KVM_UNIT_TESTS_BUILD_DIR="$ROOT_DIR/kvm-unit-tests"
 
-export WORK_DIR="/home/nsaenz/c/qemu-kvm-dev-env"
+export WORK_DIR="$ROOT_DIR/qemu-kvm-dev-env"
 #export GUEST_IMAGE="$WORK_DIR/../qemu-kvm-dev-disk-images/windows-server-2016.qcow2"
 export GUEST_IMAGE="/home/nsaenz/brim2/src/Brimstone/brimstone-blobs/amis/windows-server-2019-NVMe-UEFI.qcow2"
 
