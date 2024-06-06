@@ -18,16 +18,16 @@ HV="$HV,hv-tlbflush=on"
 HV="$HV,hv-ipi=on"
 HV="$HV,hv-frequencies=on"
 HV="$HV,hv-vapic=on"
+HV="$HV,hv-stimer-direct=on"
 HV="$HV,hv-vsm=on"
 #HV="hv-passthrough=on"
 
-CPUS="2"
 VARS=sb
 MACHINE=pc
 grep -q blank /proc/cmdline && VARS=blank
 grep -q q35 /proc/cmdline && MACHINE=q35
 grep -q dev_env_gdb /proc/cmdline && DBG="gdb --args"
-grep -q dev_env_trace /proc/cmdline && DBG="trace-cmd record -e kvm -o /host/trace.dat" && TRACE_CMD="--trace \"hyperv_*\" --trace \"kvm_*\""
+grep -q dev_env_trace /proc/cmdline && DBG="trace-cmd record -e kvm -e kvmmmu:kvm_mem_attributes_faultin_access_prots -o /host/trace.dat" && TRACE_CMD="--trace \"hyperv_*\" --trace \"kvm_*\""
 grep -q dev_env_unit /proc/cmdline && UNIT=$(cat /proc/cmdline |  sed -n "s/.*dev_env_unit=\([^[:space:],]*\).*/\1/p")
 
 TRACE_CMD="--trace \"hyperv_*\" --trace \"kvm_*\""
@@ -41,7 +41,7 @@ else
 	CMD="$CMD -cpu host,$HV"
 	CMD="$CMD -enable-kvm"
 	CMD="$CMD -net none"
-	CMD="$CMD -m 8G"
+	CMD="$CMD -m $MEM"
 	CMD="$CMD -vnc :0"
 	CMD="$CMD -drive file=/dev/nvme0n1,if=none,id=d,cache=none,format=raw"
 	CMD="$CMD -device nvme,drive=d,serial=1234,bootindex=1"
