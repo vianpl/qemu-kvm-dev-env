@@ -1,13 +1,12 @@
 #!/bin/bash
 
-export ROOT_DIR="/home/nsaenz/c/"
+export ROOT_DIR="/home/nutanix/qemu-kvm-dev-env"
 export QEMU_BUILD_DIR="$ROOT_DIR/qemu/build"
 export KERNEL_BUILD_DIR="$ROOT_DIR/linux"
 export KVM_UNIT_TESTS_BUILD_DIR="$ROOT_DIR/kvm-unit-tests"
 
 export WORK_DIR="$ROOT_DIR/qemu-kvm-dev-env"
-#export GUEST_IMAGE="$WORK_DIR/../qemu-kvm-dev-disk-images/windows-server-2016.qcow2"
-export GUEST_IMAGE="/home/nsaenz/brim2/src/Brimstone/brimstone-blobs/amis/windows-server-2019-NVMe-UEFI.qcow2"
+export GUEST_IMAGE="/home/nutanix/win2022-uefi-secure-mode.qcow2"
 
 # No need to change the defines below, the defaults should be mostly fine
 export SHARE_DIR="$WORK_DIR/share"
