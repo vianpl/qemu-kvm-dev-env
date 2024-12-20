@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export ROOT_DIR="/home/nutanix/qemu-kvm-dev-env"
+export ROOT_DIR="/home/nutanix"
 export QEMU_BUILD_DIR="$ROOT_DIR/qemu/build"
 export KERNEL_BUILD_DIR="$ROOT_DIR/linux"
 export KVM_UNIT_TESTS_BUILD_DIR="$ROOT_DIR/kvm-unit-tests"
@@ -20,5 +20,5 @@ export HOST_TELNET_PORT="1237"
 export GUEST_CONSOLE_PORT="1235"
 export GDB_PORT="1234"
 
-export CPUS="8"
-export MEM="32G"
+export CPUS="16"
+export MEM="64G"
