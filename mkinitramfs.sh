@@ -8,7 +8,7 @@ set -e
 # busybox for helper functions. Use it for quick kernel debugging.
 
 OUT="$1"
-BINARIES="bash busybox sleep ip $QEMU_BUILD_DIR/qemu-system-x86_64 strace trace-cmd $3"
+BINARIES="bash busybox sleep ip brctl tcpdump $QEMU_BUILD_DIR/qemu-system-x86_64 $QEMU_BUILD_DIR/qemu-bridge-helper strace trace-cmd $3"
 
 for i in $BINARIES; do
     if ! which $i &>/dev/null; then
@@ -69,6 +69,10 @@ TMPDIR=$(mktemp -d)
     echo "root::0:0:root:/root:/bin/sh" > etc/passwd
     cp $ROOTDIR/config.sh .
     cp $ROOTDIR/run.sh .
+    cp $ROOTDIR/dhcp-client-script.sh .
+    cp $ROOTDIR/run_br0.sh .
+    mkdir -p etc/qemu
+    echo "allow br0" > etc/qemu/bridge.conf
 
     # Install QEMU add-ons if needed
     if [[ $BINARIES = *qemu* ]]; then

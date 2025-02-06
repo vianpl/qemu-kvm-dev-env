@@ -6,7 +6,7 @@ export KERNEL_BUILD_DIR="$ROOT_DIR/linux"
 export KVM_UNIT_TESTS_BUILD_DIR="$ROOT_DIR/kvm-unit-tests"
 
 export WORK_DIR="$ROOT_DIR/qemu-kvm-dev-env"
-export GUEST_IMAGE="/home/nutanix/win2022-uefi-secure-mode.qcow2"
+export GUEST_IMAGE="/home/nutanix/rob-win2019-vsm-uefi.qcow2"
 
 # No need to change the defines below, the defaults should be mostly fine
 export SHARE_DIR="$WORK_DIR/share"

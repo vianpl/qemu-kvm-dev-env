@@ -12,9 +12,13 @@ mkdir /dev/pts
 mount devpts /dev/pts -t devpts
 ln -s /bin /usr/bin
 ln -s /proc/self/fd /dev/fd
+ip link set eth0 down
+ip link add br0 type bridge
+ip link set eth0 master br0
 ip link set eth0 up
-ip addr add 10.0.2.15/24 dev eth0
-ip route add 0.0.0.0/0 via 10.0.2.2
+ip link set br0 up
+udhcpc -i br0 -s ./dhcp-client-script.sh
 mkdir /host
 mount -t 9p -o trans=virtio host /host -oversion=9p2000.L,msize=16777216
 telnetd -p $HOST_TELNET_PORT
+adduser tcpdump -p tcpdump
