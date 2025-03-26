@@ -87,7 +87,7 @@ TMPDIR=$(mktemp -d)
     cp $ROOTDIR/*.fd .
 
     # Install gdb
-    cp $ROOTDIR/gdb* bin/gdb
+    cp $ROOTDIR/gdb bin/gdb
     cp $ROOTDIR/.gdbinit .
 
     # kvm-unit-tests
