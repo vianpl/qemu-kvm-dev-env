@@ -69,6 +69,18 @@ TMPDIR=$(mktemp -d)
     echo "root::0:0:root:/root:/bin/sh" > etc/passwd
     cp $ROOTDIR/config.sh .
     cp $ROOTDIR/run.sh .
+    cp $ROOTDIR/run_l2.sh .
+
+    # Dispatcher: pick run.sh (L1) or run_l2.sh (L2) by inspecting the
+    # kernel cmdline. inittab invokes this single entry point.
+    cat > run_dispatch.sh <<'EOF'
+#!/bin/sh
+if grep -q dev_env_l2 /proc/cmdline; then
+	exec ./run_l2.sh
+fi
+exec ./run.sh
+EOF
+    chmod +x run_dispatch.sh
 
     # Install QEMU add-ons if needed
     if [[ $BINARIES = *qemu* ]]; then

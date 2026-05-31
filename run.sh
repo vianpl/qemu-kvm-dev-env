@@ -3,12 +3,16 @@
 . $(dirname "$0")/config.sh
 
 # Defaults; overridden by /host/dev_env (written by run_tmux.py).
+# The env file is sourced only by L1; L2 sees dev_env_l2 in cmdline and
+# is dispatched to run_l2.sh before reaching here, but be defensive in
+# case run.sh is invoked directly inside L2.
 DEV_GDB=0
 DEV_TRACE=0
+DEV_NESTED=0
 DEV_UNIT=
 DEV_SELFTEST=
 DEV_PAYLOAD=
-if [ -r /host/dev_env ]; then
+if ! grep -q dev_env_l2 /proc/cmdline && [ -r /host/dev_env ]; then
 	. /host/dev_env
 fi
 
@@ -27,6 +31,27 @@ if [ -n "$DEV_UNIT" ]; then
 	CMD="$DBG ./kvm-unit-tests/$DEV_UNIT"
 elif [ -n "$DEV_SELFTEST" ]; then
 	CMD="$DBG ./host/run_kselftest.sh -t $DEV_SELFTEST; poweroff"
+elif [ "$DEV_NESTED" = "1" ]; then
+	rm -f /host/payload_result
+	CMD="$DBG /host/qemu-system-x86_64"
+	CMD="$CMD -smp 4"
+	CMD="$CMD -kernel /host/bzImage"
+	CMD="$CMD -initrd /host/initrd"
+	CMD="$CMD -cpu host,+kvm-guest-hints"
+	CMD="$CMD -machine q35"
+	CMD="$CMD -enable-kvm"
+	CMD="$CMD -m 4G"
+	CMD="$CMD -net none"
+	CMD="$CMD -display none"
+	CMD="$CMD -device virtio-serial-pci"
+	CMD="$CMD -chardev stdio,id=c,signal=off,mux=on"
+	CMD="$CMD -mon chardev=c,mode=readline"
+	CMD="$CMD -device virtconsole,chardev=c"
+	CMD="$CMD -append \"console=hvc0 nokaslr dev_env_l2\""
+	CMD="$CMD -virtfs local,path=/host,mount_tag=host,security_model=none"
+	if [ -n "$DEV_PAYLOAD" ]; then
+		CMD="$CMD; cat /host/payload_result 2>/dev/null || echo 'L2: NO RESULT FILE'; poweroff"
+	fi
 elif [ -n "$DEV_PAYLOAD" ]; then
 	rm -f /host/payload_result
 	CMD="PAYLOAD_RESULT_FILE=/host/payload_result $DBG /host/payloads/$DEV_PAYLOAD"

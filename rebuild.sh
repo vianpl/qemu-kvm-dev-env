@@ -17,7 +17,12 @@ if [ -n "$SELFTEST" ]; then
 fi
 cd -
 
-# Stage payloads/ so test scripts are reachable from the guest via
-# /host/payloads/.
+# Stage bzImage + initrd + patched qemu into the L1->L2 share dir so a
+# nested qemu (run.sh with dev_env_nested) can boot the same patched
+# kernel as L2 against our patched QEMU. Also stage payloads/ so test
+# scripts are reachable from both L1 and L2 via /host/payloads/.
+cp "$KERNEL_BUILD_DIR/arch/x86/boot/bzImage" "$SHARE_DIR/bzImage"
+cp "$INITRD_PATH" "$SHARE_DIR/initrd"
+cp "$QEMU_BUILD_DIR/qemu-system-x86_64" "$SHARE_DIR/qemu-system-x86_64"
 mkdir -p "$SHARE_DIR/payloads"
 cp -f "$WORK_DIR"/payloads/* "$SHARE_DIR/payloads/" 2>/dev/null || true
