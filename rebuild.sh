@@ -16,3 +16,8 @@ if [ -n "$SELFTEST" ]; then
 	make -C tools/testing/selftests TARGETS=kvm INSTALL_PATH=$SHARE_DIR/ CC=clang -j100 install
 fi
 cd -
+
+# Stage payloads/ so test scripts are reachable from the guest via
+# /host/payloads/.
+mkdir -p "$SHARE_DIR/payloads"
+cp -f "$WORK_DIR"/payloads/* "$SHARE_DIR/payloads/" 2>/dev/null || true

@@ -7,6 +7,7 @@ DEV_GDB=0
 DEV_TRACE=0
 DEV_UNIT=
 DEV_SELFTEST=
+DEV_PAYLOAD=
 if [ -r /host/dev_env ]; then
 	. /host/dev_env
 fi
@@ -26,6 +27,10 @@ if [ -n "$DEV_UNIT" ]; then
 	CMD="$DBG ./kvm-unit-tests/$DEV_UNIT"
 elif [ -n "$DEV_SELFTEST" ]; then
 	CMD="$DBG ./host/run_kselftest.sh -t $DEV_SELFTEST; poweroff"
+elif [ -n "$DEV_PAYLOAD" ]; then
+	rm -f /host/payload_result
+	CMD="PAYLOAD_RESULT_FILE=/host/payload_result $DBG /host/payloads/$DEV_PAYLOAD"
+	CMD="$CMD; cat /host/payload_result 2>/dev/null || echo 'L1: NO RESULT FILE'; poweroff"
 else
 	CMD="$DBG qemu-system-x86_64 $TRACE_CMD"
 	CMD="$CMD -machine $MACHINE"

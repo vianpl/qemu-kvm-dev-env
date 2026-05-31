@@ -102,6 +102,13 @@ class Args(ArgsBase):
         parser.set_defaults(trace=False)
         parser.add_argument('--unit', dest='unit', required=False, default=None)
         parser.add_argument('--selftest', dest='selftest', required=False, default=None)
+        parser.add_argument(
+            '--payload',
+            dest='payload',
+            required=False,
+            default=None,
+            help='Test script under payloads/ to run, then poweroff.'
+        )
         parser.add_argument('--tmux', action='store_true')
         parser.set_defaults(tmux=False)
 
@@ -115,7 +122,7 @@ class Args(ArgsBase):
                 sys.exit(1)
 
 
-def write_dev_env(share_dir, gdb, trace, unit, selftest):
+def write_dev_env(share_dir, gdb, trace, unit, selftest, payload):
     """Write a shell-sourceable env file consumed by run.sh inside L1.
 
     Keeps run.sh free of grep+sed plumbing for each new mode.
@@ -126,6 +133,7 @@ def write_dev_env(share_dir, gdb, trace, unit, selftest):
         'DEV_TRACE={}'.format(1 if trace else 0),
         'DEV_UNIT={}'.format(unit if unit else ''),
         'DEV_SELFTEST={}'.format(selftest if selftest else ''),
+        'DEV_PAYLOAD={}'.format(payload if payload else ''),
     ]
     with open('{}/dev_env'.format(share_dir), 'w') as f:
         f.write('\n'.join(lines) + '\n')
@@ -178,7 +186,16 @@ if __name__ == '__main__':
     share_dir = os.environ.get(
         'SHARE_DIR',
         os.path.join(os.path.dirname(os.path.abspath(__file__)), 'share'))
-    write_dev_env(share_dir, args.gdb, args.trace, args.unit, args.selftest)
+    if args.payload:
+        payload_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'payloads', args.payload)
+        if not os.path.isfile(payload_path):
+            print("Payload not found: {}".format(payload_path))
+            exit(1)
+
+    write_dev_env(share_dir, args.gdb, args.trace, args.unit,
+                  args.selftest, args.payload)
 
     try:
         if args.tmux:
