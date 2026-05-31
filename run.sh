@@ -2,18 +2,27 @@
 
 . $(dirname "$0")/config.sh
 
+# Defaults; overridden by /host/dev_env (written by run_tmux.py).
+DEV_GDB=0
+DEV_TRACE=0
+DEV_UNIT=
+if [ -r /host/dev_env ]; then
+	. /host/dev_env
+fi
+
 VARS=sb
 MACHINE=pc
 grep -q blank /proc/cmdline && VARS=blank
 grep -q q35 /proc/cmdline && MACHINE=q35
-grep -q dev_env_gdb /proc/cmdline && DBG="gdb --args"
-grep -q dev_env_trace /proc/cmdline && DBG="trace-cmd record -e kvm -e kvmmmu:kvm_faultin_memory_protections -o /host/trace.dat" && TRACE_CMD="--trace \"hyperv_*\" --trace \"kvm_*\""
-grep -q dev_env_unit /proc/cmdline && UNIT=$(cat /proc/cmdline |  sed -n "s/.*dev_env_unit=\([^[:space:],]*\).*/\1/p")
 
+[ "$DEV_GDB" = "1" ] && DBG="gdb --args"
+if [ "$DEV_TRACE" = "1" ]; then
+	DBG="trace-cmd record -e kvm -e kvmmmu:kvm_faultin_memory_protections -o /host/trace.dat"
+fi
 TRACE_CMD="--trace \"hyperv_*\" --trace \"kvm_*\""
 
-if [[ "$UNIT" ]]; then
-	CMD="$DBG ./kvm-unit-tests/$UNIT"
+if [ -n "$DEV_UNIT" ]; then
+	CMD="$DBG ./kvm-unit-tests/$DEV_UNIT"
 else
 	CMD="$DBG qemu-system-x86_64 $TRACE_CMD"
 	CMD="$CMD -machine $MACHINE"
