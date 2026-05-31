@@ -2,26 +2,6 @@
 
 . $(dirname "$0")/config.sh
 
-HV="hv-crash=on"
-HV="$HV,hv-vpindex=on"
-HV="$HV,hv-relaxed=on"
-HV="$HV,hv-synic=on"
-HV="$HV,hv-stimer=on"
-HV="$HV,hv-runtime=on"
-HV="$HV,hv-time=on"
-HV="$HV,hv-reset=on"
-HV="$HV,hv-time=on"
-HV="$HV,hv-xmm-input=on"
-HV="$HV,hv-tlbflush-ext=on"
-HV="$HV,hv-xmm-output=on"
-HV="$HV,hv-tlbflush=on"
-HV="$HV,hv-ipi=on"
-HV="$HV,hv-frequencies=on"
-HV="$HV,hv-vapic=on"
-HV="$HV,hv-stimer-direct=on"
-HV="$HV,hv-vsm=on"
-#HV="hv-passthrough=on"
-
 VARS=sb
 MACHINE=pc
 grep -q blank /proc/cmdline && VARS=blank
@@ -38,7 +18,7 @@ else
 	CMD="$DBG qemu-system-x86_64 $TRACE_CMD"
 	CMD="$CMD -machine $MACHINE"
 	CMD="$CMD -smp $CPUS"
-	CMD="$CMD -cpu host,$HV"
+	CMD="$CMD -cpu host,$HV_FLAGS"
 	CMD="$CMD -enable-kvm"
 	CMD="$CMD -net none"
 	CMD="$CMD -m $MEM"

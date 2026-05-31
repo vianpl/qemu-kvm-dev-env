@@ -21,3 +21,11 @@ export HOST_TELNET_PORT="1237"
 export GUEST_CONSOLE_PORT="1235"
 export GDB_PORT="1234"
 export SSH_PORT="8000"
+
+# Hyper-V enlightenments exposed to the L2 Windows guest in the default
+# (non-nested, non-selftest) run.sh path.
+export HV_FLAGS="hv-crash=on,hv-vpindex=on,hv-relaxed=on,hv-synic=on"
+export HV_FLAGS="$HV_FLAGS,hv-stimer=on,hv-runtime=on,hv-time=on,hv-reset=on"
+export HV_FLAGS="$HV_FLAGS,hv-xmm-input=on,hv-tlbflush-ext=on,hv-xmm-output=on"
+export HV_FLAGS="$HV_FLAGS,hv-tlbflush=on,hv-ipi=on,hv-frequencies=on"
+export HV_FLAGS="$HV_FLAGS,hv-vapic=on,hv-stimer-direct=on,hv-vsm=on"
