@@ -6,6 +6,7 @@
 DEV_GDB=0
 DEV_TRACE=0
 DEV_UNIT=
+DEV_SELFTEST=
 if [ -r /host/dev_env ]; then
 	. /host/dev_env
 fi
@@ -23,6 +24,8 @@ TRACE_CMD="--trace \"hyperv_*\" --trace \"kvm_*\""
 
 if [ -n "$DEV_UNIT" ]; then
 	CMD="$DBG ./kvm-unit-tests/$DEV_UNIT"
+elif [ -n "$DEV_SELFTEST" ]; then
+	CMD="$DBG ./host/run_kselftest.sh -t $DEV_SELFTEST; poweroff"
 else
 	CMD="$DBG qemu-system-x86_64 $TRACE_CMD"
 	CMD="$CMD -machine $MACHINE"

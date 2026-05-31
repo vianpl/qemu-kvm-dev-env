@@ -101,6 +101,7 @@ class Args(ArgsBase):
         parser.add_argument('--trace', action='store_true')
         parser.set_defaults(trace=False)
         parser.add_argument('--unit', dest='unit', required=False, default=None)
+        parser.add_argument('--selftest', dest='selftest', required=False, default=None)
         parser.add_argument('--tmux', action='store_true')
         parser.set_defaults(tmux=False)
 
@@ -114,7 +115,7 @@ class Args(ArgsBase):
                 sys.exit(1)
 
 
-def write_dev_env(share_dir, gdb, trace, unit):
+def write_dev_env(share_dir, gdb, trace, unit, selftest):
     """Write a shell-sourceable env file consumed by run.sh inside L1.
 
     Keeps run.sh free of grep+sed plumbing for each new mode.
@@ -124,6 +125,7 @@ def write_dev_env(share_dir, gdb, trace, unit):
         'DEV_GDB={}'.format(1 if gdb else 0),
         'DEV_TRACE={}'.format(1 if trace else 0),
         'DEV_UNIT={}'.format(unit if unit else ''),
+        'DEV_SELFTEST={}'.format(selftest if selftest else ''),
     ]
     with open('{}/dev_env'.format(share_dir), 'w') as f:
         f.write('\n'.join(lines) + '\n')
@@ -166,12 +168,17 @@ if __name__ == '__main__':
         print("Failed to create initrd:\n{}".format(proc.stderr.decode("utf-8")))
         exit(0)
 
+    rebuild_cmd = "./rebuild.sh"
+    if args.selftest:
+        rebuild_cmd += " --selftest"
+    subprocess.call(rebuild_cmd, shell=True)
+
     # SHARE_DIR comes from config.sh; mirror its layout here.
     import os
     share_dir = os.environ.get(
         'SHARE_DIR',
         os.path.join(os.path.dirname(os.path.abspath(__file__)), 'share'))
-    write_dev_env(share_dir, args.gdb, args.trace, args.unit)
+    write_dev_env(share_dir, args.gdb, args.trace, args.unit, args.selftest)
 
     try:
         if args.tmux:
